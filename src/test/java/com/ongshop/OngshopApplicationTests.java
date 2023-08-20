@@ -1,0 +1,13 @@
+package com.ongshop;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class OngshopApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
