@@ -8,12 +8,12 @@ import lombok.Data;
 @Builder
 public class MemberResponseDto {
 
-    private String email;
+    private String id;
     private String nickname;
 
     public static MemberResponseDto of(Member member) {
         return MemberResponseDto.builder()
-                .email(member.getEmail())
+                .id(member.getId())
                 .nickname(member.getNickname())
                 .build();
     }

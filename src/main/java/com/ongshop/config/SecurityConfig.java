@@ -1,5 +1,9 @@
 package com.ongshop.config;
 
+import com.ongshop.jwt.JwtAccessDeniedHandler;
+import com.ongshop.jwt.JwtAuthenticationEntryPoint;
+import com.ongshop.jwt.JwtSecurityConfig;
+import com.ongshop.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
@@ -24,49 +29,42 @@ public class SecurityConfig {
 
     private String[] AUTH_WHITELIST = {
             "/",
+            "/error",
             "/api/signin",
-            "/api/signup"
+            "/api/members"
     };
 
-    private static final String[] ORIGINS_WHITELIST = {
-            "http://localhost:3000",
-    };
+//    private static final String[] ORIGINS_WHITELIST = {
+//            "http://localhost:3000",
+//    };
 
-    @Bean
-    protected CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT"));
-        configuration.setAllowedOrigins(Arrays.asList(ORIGINS_WHITELIST));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
-    }
-
-    @Bean
-    public JwtAuthenticationFilter authenticationTokenFilterBean() throws Exception {
-        return new JwtAuthenticationFilter();
-    }
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeRequests(authorize -> authorize
-                        .antMatchers(AUTH_WHITELIST).permitAll()
-                        .anyRequest().authenticated()
-                ).sessionManagement((sessionManagement) ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).cors().and()
-                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer
-                                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-                );
+        http.csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+
+                .and()
+                .headers()
+                .frameOptions()
+                .sameOrigin()
+
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                .and()
+                .authorizeRequests()
+                .antMatchers(AUTH_WHITELIST).permitAll()
+                .anyRequest().authenticated()
+
+                .and()
+                .apply(new JwtSecurityConfig(jwtTokenProvider));
 
         return http.build();
     }

@@ -10,20 +10,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Data
 @Builder
 public class MemberRequestDto {
-    private String email;
+    private String id;
     private String password;
     private String nickname;
 
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
-                .email(email)
+                .id(id)
                 .nickname(nickname)
                 .password(passwordEncoder.encode(password))
                 .role(MemberRole.USER)
                 .build();
-    }
-
-    public UsernamePasswordAuthenticationToken toAuthentication() {
-        return new UsernamePasswordAuthenticationToken(email, password);
     }
 }

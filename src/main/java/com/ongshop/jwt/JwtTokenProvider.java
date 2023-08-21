@@ -1,7 +1,10 @@
 package com.ongshop.jwt;
 
+import com.ongshop.api.response.TokenDto;
 import com.ongshop.security.CustomUserDetails;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.*;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -11,9 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Base64;
@@ -26,7 +29,7 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider implements InitializingBean {
 
     public static final long JWT_TOKEN_VALIDITY = (long) ((1 * 60 * 60) / 60) * 60; // 60분
-    private static final String AUTHORITIES_KEY = "OngShopApi";
+    private static final String AUTHORITIES_KEY = "auth";
     private final String secret;
     private final long tokenValidityInMilliseconds;
     private Key key;
@@ -39,38 +42,49 @@ public class JwtTokenProvider implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        byte[] keyBytes = Base64.getDecoder().decode(secret);
-        this.key = io.jsonwebtoken.security.Keys.hmacShaKeyFor(keyBytes);
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(Authentication authentication) {
+    public TokenDto generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
+        Date accessTokenExpiresIn = new Date(now + this.tokenValidityInMilliseconds);
 
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
+                .setExpiration(accessTokenExpiresIn)
                 .compact();
+
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(now + 86400000))
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return TokenDto.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = parseClaims(token);
+
+        if (claims.get("auth") == null) {
+            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+        }
 
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal = new User(claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
@@ -91,20 +105,15 @@ public class JwtTokenProvider implements InitializingBean {
         return false;
     }
 
-    public String getEmailFromToken(String token) {
-        Claims claims = getClaimFromToken(token);
-        return claims.get("email").toString();
+    private Claims parseClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
-
-    public Claims getClaimFromToken(String token) {
-        final Claims claims = getAllClaimsFromToken(token);
-        return claims;
-    }
-
-    public Claims getAllClaimsFromToken(String token) {
-        log.debug("===>>> secret = {}", SECRET_KEY);
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-    }
-
-
 }
