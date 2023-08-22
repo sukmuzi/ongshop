@@ -1,6 +1,7 @@
 package com.ongshop.api.service;
 
 import com.ongshop.api.repository.MemberApiRepository;
+import com.ongshop.api.request.MemberLoginRequestDto;
 import com.ongshop.api.request.MemberRequestDto;
 import com.ongshop.api.response.MemberResponseDto;
 import com.ongshop.api.response.TokenDto;
@@ -28,14 +29,24 @@ public class MemberApiService {
     private final JwtTokenProvider jwtTokenProvider;
 
 //    @Transactional
-    public TokenDto signin(String id, String password) {
+//    public TokenDto signin(String id, String password) {
+//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
+//        log.debug("signin >>>> id : {}, password: {}", id, password);
+//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+//
+////        TokenDto tokenDto = jwtTokenProvider.generateToken(authentication);
+//////        return tokenDto;
+//        String token = jwtTokenProvider.generateToken(authentication);
+//    }
+
+    public String generateToken(MemberLoginRequestDto memberLoginRequestDto) {
+        String id = memberLoginRequestDto.getId();
+        String password = memberLoginRequestDto.getPassword();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
         log.debug("signin >>>> id : {}, password: {}", id, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        TokenDto tokenDto = jwtTokenProvider.generateToken(authentication);
-
-        return tokenDto;
+        return jwtTokenProvider.generateToken(authentication);
     }
 
     public MemberResponseDto signup(MemberRequestDto memberRequestDto) throws ApiException {
