@@ -1,11 +1,10 @@
 package com.ongshop.api.controller;
 
 import com.ongshop.api.repository.MemberApiRepository;
-import com.ongshop.api.request.MemberLoginRequestDto;
-import com.ongshop.api.request.MemberRequestDto;
-import com.ongshop.api.response.MemberLoginResponseDto;
-import com.ongshop.api.response.MemberResponseDto;
-import com.ongshop.api.response.TokenDto;
+import com.ongshop.api.request.MemberLoginRequest;
+import com.ongshop.api.request.MemberRequest;
+import com.ongshop.api.response.MemberLoginResponse;
+import com.ongshop.api.response.MemberResponse;
 import com.ongshop.api.service.MemberApiService;
 import com.ongshop.domain.Member;
 import com.ongshop.exception.ApiException;
@@ -23,15 +22,15 @@ public class MemberApiController {
     private final MemberApiService memberApiService;
 
     @PostMapping("/api/signin")
-    public MemberLoginResponseDto signin(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
-        Member member = memberApiRepository.findById(memberLoginRequestDto.getId());
-        String token = memberApiService.generateToken(memberLoginRequestDto);
+    public MemberLoginResponse signin(@RequestBody MemberLoginRequest memberLoginRequest) {
+        Member member = memberApiRepository.findById(memberLoginRequest.getId());
+        String token = memberApiService.generateToken(memberLoginRequest);
 
-        return MemberLoginResponseDto.of(member, token);
+        return MemberLoginResponse.of(member, token);
     }
 
     @PostMapping("/api/members")
-    public ResponseEntity<MemberResponseDto> signup(@RequestBody MemberRequestDto memberRequestDto) throws ApiException {
-        return ResponseEntity.ok(memberApiService.signup(memberRequestDto));
+    public ResponseEntity<MemberResponse> signup(@RequestBody MemberRequest memberRequest) throws ApiException {
+        return ResponseEntity.ok(memberApiService.signup(memberRequest));
     }
 }

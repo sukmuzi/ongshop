@@ -1,10 +1,9 @@
 package com.ongshop.api.service;
 
 import com.ongshop.api.repository.MemberApiRepository;
-import com.ongshop.api.request.MemberLoginRequestDto;
-import com.ongshop.api.request.MemberRequestDto;
-import com.ongshop.api.response.MemberResponseDto;
-import com.ongshop.api.response.TokenDto;
+import com.ongshop.api.request.MemberLoginRequest;
+import com.ongshop.api.request.MemberRequest;
+import com.ongshop.api.response.MemberResponse;
 import com.ongshop.domain.Member;
 import com.ongshop.exception.ApiException;
 import com.ongshop.jwt.JwtTokenProvider;
@@ -39,9 +38,9 @@ public class MemberApiService {
 //        String token = jwtTokenProvider.generateToken(authentication);
 //    }
 
-    public String generateToken(MemberLoginRequestDto memberLoginRequestDto) {
-        String id = memberLoginRequestDto.getId();
-        String password = memberLoginRequestDto.getPassword();
+    public String generateToken(MemberLoginRequest memberLoginRequest) {
+        String id = memberLoginRequest.getId();
+        String password = memberLoginRequest.getPassword();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
         log.debug("signin >>>> id : {}, password: {}", id, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -49,13 +48,13 @@ public class MemberApiService {
         return jwtTokenProvider.generateToken(authentication);
     }
 
-    public MemberResponseDto signup(MemberRequestDto memberRequestDto) throws ApiException {
+    public MemberResponse signup(MemberRequest memberRequest) throws ApiException {
 //        if (memberApiRepository.existsByEmail(memberRequestDto.getEmail())) {
 //            throw new RuntimeException("이미 가입되어 있는 이메일입니다.");
 //        }
 
-        Member member = memberRequestDto.toMember(passwordEncoder);
+        Member member = memberRequest.toMember(passwordEncoder);
 
-        return MemberResponseDto.of(memberApiRepository.save(member));
+        return MemberResponse.of(memberApiRepository.save(member));
     }
 }
