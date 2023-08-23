@@ -4,12 +4,11 @@ import com.ongshop.domain.Member;
 import com.ongshop.domain.MemberRole;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
 @Builder
-public class MemberRequestDto {
+public class MemberRequest {
     private String id;
     private String password;
     private String nickname;

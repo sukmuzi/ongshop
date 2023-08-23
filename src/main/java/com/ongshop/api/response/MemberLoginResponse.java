@@ -6,14 +6,14 @@ import lombok.Data;
 
 @Data
 @Builder
-public class MemberLoginResponseDto {
+public class MemberLoginResponse {
     private String id;
     private String nickname;
     private boolean isAdmin;
     private String accessToken;
 
-    public static MemberLoginResponseDto of(Member member, String token) {
-        return MemberLoginResponseDto.builder()
+    public static MemberLoginResponse of(Member member, String token) {
+        return MemberLoginResponse.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
                 .isAdmin(member.getRole().toString().equals("ADMIN"))

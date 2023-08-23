@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class MemberResponseDto {
+public class MemberResponse {
 
     private String id;
     private String nickname;
 
-    public static MemberResponseDto of(Member member) {
-        return MemberResponseDto.builder()
+    public static MemberResponse of(Member member) {
+        return MemberResponse.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
                 .build();
