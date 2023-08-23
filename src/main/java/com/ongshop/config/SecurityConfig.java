@@ -31,7 +31,8 @@ public class SecurityConfig {
             "/",
             "/error",
             "/api/signin",
-            "/api/members"
+            "/api/members",
+            "/api/products"
     };
 
 //    private static final String[] ORIGINS_WHITELIST = {
