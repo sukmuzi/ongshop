@@ -3,14 +3,16 @@ package com.ongshop.api.controller;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.ongshop.api.repository.ProductApiRepository;
-import com.ongshop.api.request.ProductUploadRequest;
+import com.ongshop.api.request.product.ProductUploadRequest;
+import com.ongshop.api.response.ApiResponse;
+import com.ongshop.api.response.product.ProductListResponse;
 import com.ongshop.api.service.ProductApiService;
 import com.ongshop.domain.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -19,12 +21,12 @@ import java.util.Map;
 public class ProductApiController {
 
     private final Cloudinary cloudinary;
-//    private final ProductApiService productApiService;
+    private final ProductApiService productApiService;
 
     private final ProductApiRepository productApiRepository;
 
     @PostMapping("/api/products")
-    public String uploadProducts(ProductUploadRequest productUploadRequest) throws Exception {
+    public ApiResponse<?> uploadProducts(ProductUploadRequest productUploadRequest) throws Exception {
         Map uploadResult = cloudinary.uploader().upload(productUploadRequest.getFile().getBytes(), ObjectUtils.emptyMap());
         String publicId = uploadResult.get("public_id").toString();
         String imgUrl = uploadResult.get("url").toString();
@@ -33,6 +35,13 @@ public class ProductApiController {
         Product product = productUploadRequest.toProduct(imgUrl);
         productApiRepository.save(product);
 
-        return publicId;
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    @GetMapping("/api/products")
+    public ApiResponse<List<ProductListResponse>> getProductsList(@RequestParam Long lastProductNo, @RequestParam int size) throws Exception {
+        List<ProductListResponse> productList = productApiService.getProductList(lastProductNo, size);
+
+        return ApiResponse.createSuccess(productList);
     }
 }

@@ -13,21 +13,25 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
+public class Product extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
     private Long no;
 
     private String title;
-    private int price;
+    private String price;
+    private String category;
+    private String option;
     private String explanation;
     private String imgUrl;
 
     @Builder
-    public Product(String title, int price, String explanation, String imgUrl) {
+    public Product(String title, String price, String category, String option, String explanation, String imgUrl) {
         this.title = title;
         this.price = price;
+        this.category = category;
+        this.option = option;
         this.explanation = explanation;
         this.imgUrl = imgUrl;
     }
