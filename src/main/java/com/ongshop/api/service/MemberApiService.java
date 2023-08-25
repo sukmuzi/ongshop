@@ -1,9 +1,9 @@
 package com.ongshop.api.service;
 
 import com.ongshop.api.repository.MemberApiRepository;
-import com.ongshop.api.request.MemberLoginRequest;
-import com.ongshop.api.request.MemberRequest;
-import com.ongshop.api.response.MemberResponse;
+import com.ongshop.api.request.member.MemberLoginRequest;
+import com.ongshop.api.request.member.MemberSignupRequest;
+import com.ongshop.api.response.member.MemberSignupResponse;
 import com.ongshop.domain.Member;
 import com.ongshop.exception.ApiException;
 import com.ongshop.jwt.JwtTokenProvider;
@@ -27,17 +27,6 @@ public class MemberApiService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @Transactional
-//    public TokenDto signin(String id, String password) {
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
-//        log.debug("signin >>>> id : {}, password: {}", id, password);
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//
-////        TokenDto tokenDto = jwtTokenProvider.generateToken(authentication);
-//////        return tokenDto;
-//        String token = jwtTokenProvider.generateToken(authentication);
-//    }
-
     public String generateToken(MemberLoginRequest memberLoginRequest) {
         String id = memberLoginRequest.getId();
         String password = memberLoginRequest.getPassword();
@@ -48,13 +37,9 @@ public class MemberApiService {
         return jwtTokenProvider.generateToken(authentication);
     }
 
-    public MemberResponse signup(MemberRequest memberRequest) throws ApiException {
-//        if (memberApiRepository.existsByEmail(memberRequestDto.getEmail())) {
-//            throw new RuntimeException("이미 가입되어 있는 이메일입니다.");
-//        }
+    public MemberSignupResponse signup(MemberSignupRequest memberSignupRequest) throws ApiException {
+        Member member = memberSignupRequest.toMember(passwordEncoder);
 
-        Member member = memberRequest.toMember(passwordEncoder);
-
-        return MemberResponse.of(memberApiRepository.save(member));
+        return MemberSignupResponse.of(memberApiRepository.save(member));
     }
 }
