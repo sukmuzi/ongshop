@@ -1,4 +1,4 @@
-package com.ongshop.api.response;
+package com.ongshop.api.response.member;
 
 import com.ongshop.domain.Member;
 import lombok.Builder;

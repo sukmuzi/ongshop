@@ -1,4 +1,4 @@
-package com.ongshop.api.request;
+package com.ongshop.api.request.member;
 
 import com.ongshop.domain.Member;
 import com.ongshop.domain.MemberRole;
@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
 @Builder
-public class MemberRequest {
+public class MemberSignupRequest {
     private String id;
     private String password;
     private String nickname;

@@ -1,4 +1,4 @@
-package com.ongshop.api.response;
+package com.ongshop.api.response.member;
 
 import com.ongshop.domain.Member;
 import lombok.Builder;
@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class MemberResponse {
+public class MemberSignupResponse {
 
     private String id;
     private String nickname;
 
-    public static MemberResponse of(Member member) {
-        return MemberResponse.builder()
+    public static MemberSignupResponse of(Member member) {
+        return MemberSignupResponse.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
                 .build();

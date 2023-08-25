@@ -1,4 +1,4 @@
-package com.ongshop.api.request;
+package com.ongshop.api.request.member;
 
 import lombok.Data;
 

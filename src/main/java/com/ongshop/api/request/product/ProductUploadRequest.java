@@ -1,4 +1,4 @@
-package com.ongshop.api.request;
+package com.ongshop.api.request.product;
 
 import com.ongshop.domain.Member;
 import com.ongshop.domain.MemberRole;
@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class ProductUploadRequest {
     private String title;
-    private int price;
+    private String price;
     private String category;
     private String option;
     private String explanation;
@@ -22,6 +22,8 @@ public class ProductUploadRequest {
         return Product.builder()
                 .title(title)
                 .price(price)
+                .category(category)
+                .option(option)
                 .explanation(explanation)
                 .imgUrl(imgUrl)
                 .build();
