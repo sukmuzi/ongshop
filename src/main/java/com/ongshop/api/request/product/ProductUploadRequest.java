@@ -1,11 +1,8 @@
 package com.ongshop.api.request.product;
 
-import com.ongshop.domain.Member;
-import com.ongshop.domain.MemberRole;
 import com.ongshop.domain.Product;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
