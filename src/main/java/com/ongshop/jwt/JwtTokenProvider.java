@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider implements InitializingBean {
 
-    public static final long JWT_TOKEN_VALIDITY = (long) ((1 * 60 * 60) / 60) * 60; // 60분
     private static final String AUTHORITIES_KEY = "auth";
     private final String secret;
     private final long tokenValidityInMilliseconds;
@@ -103,6 +101,17 @@ public class JwtTokenProvider implements InitializingBean {
             log.error("JWT 토큰이 잘못되었습니다.");
         }
         return false;
+    }
+
+    public Long getExpiration(String token) {
+        Date expiration = parseClaims(token).getExpiration();
+        long now = new Date().getTime();
+
+        return (expiration.getTime() - now);
+    }
+
+    public String getUserId(String token) {
+        return parseClaims(token).getSubject();
     }
 
     private Claims parseClaims(String token) {
