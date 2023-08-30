@@ -9,6 +9,7 @@ import com.ongshop.exception.ApiException;
 import com.ongshop.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,7 @@ public class MemberApiService {
     private final MemberApiRepository memberApiRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     public String generateToken(MemberLoginRequest memberLoginRequest) {
         String id = memberLoginRequest.getId();
@@ -33,13 +35,16 @@ public class MemberApiService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
         log.debug("signin >>>> id : {}, password: {}", id, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        String token = jwtTokenProvider.generateToken(authentication);
 
-        return jwtTokenProvider.generateToken(authentication);
+        redisTemplate.opsForValue().set("RT:" + id, token, jwtTokenProvider.getExpiration(token));
+
+        return token;
     }
 
-    public MemberSignupResponse signup(MemberSignupRequest memberSignupRequest) throws ApiException {
+    public void signup(MemberSignupRequest memberSignupRequest) throws ApiException {
         Member member = memberSignupRequest.toMember(passwordEncoder);
 
-        return MemberSignupResponse.of(memberApiRepository.save(member));
+        MemberSignupResponse.of(memberApiRepository.save(member));
     }
 }
