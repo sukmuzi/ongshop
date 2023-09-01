@@ -37,7 +37,7 @@ public class MemberApiService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         String token = jwtTokenProvider.generateToken(authentication);
 
-        redisTemplate.opsForValue().set("RT:" + id, token, jwtTokenProvider.getExpiration(token));
+//        redisTemplate.opsForValue().set("RT:" + id, token, jwtTokenProvider.getExpiration(token));
 
         return token;
     }
