@@ -28,12 +28,13 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private String[] AUTH_WHITELIST = {
+    private final String[] AUTH_WHITELIST = {
             "/",
             "/error",
-            "/api/signin",
-            "/api/members",
-            "/api/products"
+//            "/api/signin",
+//            "/api/members",
+//            "/api/products**"
+            "/api/**"
     };
 
 //    private static final String[] ORIGINS_WHITELIST = {
