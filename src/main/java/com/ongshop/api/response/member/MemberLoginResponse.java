@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class MemberLoginResponse {
+    private Long memberNo;
     private String id;
     private String nickname;
     private boolean isAdmin;
@@ -14,6 +15,7 @@ public class MemberLoginResponse {
 
     public static MemberLoginResponse of(Member member, String token) {
         return MemberLoginResponse.builder()
+                .memberNo(member.getNo())
                 .id(member.getId())
                 .nickname(member.getNickname())
                 .isAdmin(member.getRole().toString().equals("ADMIN"))
