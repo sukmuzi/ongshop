@@ -5,7 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.ongshop.api.repository.ProductApiRepository;
 import com.ongshop.api.request.product.ProductUploadRequest;
 import com.ongshop.api.response.ApiResponse;
-import com.ongshop.api.response.product.ProductListResponse;
+import com.ongshop.api.response.product.ProductResponse;
 import com.ongshop.api.service.ProductApiService;
 import com.ongshop.domain.Product;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +39,16 @@ public class ProductApiController {
     }
 
     @GetMapping("/api/products")
-    public ApiResponse<List<ProductListResponse>> getProductsList(@RequestParam Long lastProductNo, @RequestParam int size) throws Exception {
-        List<ProductListResponse> productList = productApiService.getProductList(lastProductNo, size);
+    public ApiResponse<List<ProductResponse>> getProductsList(@RequestParam Long lastProductNo, @RequestParam int size) throws Exception {
+        List<ProductResponse> productList = productApiService.getProductList(lastProductNo, size);
 
         return ApiResponse.createSuccess(productList);
+    }
+
+    @GetMapping("/api/products/{no}")
+    public ApiResponse<ProductResponse> getProductDetail(@PathVariable Long no) {
+        ProductResponse productResponse = productApiService.getProductDetail(no);
+
+        return ApiResponse.createSuccess(productResponse);
     }
 }

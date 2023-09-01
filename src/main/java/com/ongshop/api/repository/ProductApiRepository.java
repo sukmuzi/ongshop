@@ -10,4 +10,7 @@ public interface ProductApiRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "select p from Product p where p.no > ?1 order by p.no")
     Page<Product> findByProductNoBiggerThanOrderByNo(Long lastProductNo, PageRequest pageRequest);
+
+//    @Query(value = "select p from Product p where p.no = :no")
+    Product findByNo(Long no);
 }
