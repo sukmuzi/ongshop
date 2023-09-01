@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,7 +15,8 @@ import javax.persistence.*;
 public class Member extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_no")
     private Long no;
 
     @Column(unique = true)
@@ -27,6 +30,9 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+
+//    @OneToMany(mappedBy = "cart")
+//    private List<Cart> carts = new ArrayList<>();
 
     @Builder
     public Member(String id, String nickname, String password, MemberRole role) {
