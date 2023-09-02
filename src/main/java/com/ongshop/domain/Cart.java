@@ -1,13 +1,11 @@
 package com.ongshop.domain;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cart extends BaseTimeEntity {
 
@@ -17,7 +15,7 @@ public class Cart extends BaseTimeEntity {
     private Long no;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_no")
+    @JoinColumn(name = "product_no") // FK
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,4 +24,12 @@ public class Cart extends BaseTimeEntity {
 
     private String option;
     private String quantity;
+
+    @Builder
+    public Cart(Product product, Member member, String option, String quantity) {
+        this.product = product;
+        this.member = member;
+        this.option = option;
+        this.quantity = quantity;
+    }
 }
