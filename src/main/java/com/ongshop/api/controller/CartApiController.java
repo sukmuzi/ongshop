@@ -22,24 +22,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartApiController {
 
-//    private final CartApiService cartApiService;
     private final CartApiRepository cartApiRepository;
     private final ProductApiRepository productApiRepository;
     private final MemberApiRepository memberApiRepository;
 
+    /**
+     * 회원 카트 목록 조회
+     */
     @GetMapping("/api/carts/{memberNo}")
-    public ApiResponse<List<CartResponse>> getCarts(@PathVariable Long memberNo) {
+    public ApiResponse<List<CartResponse>> getCartItems(@PathVariable Long memberNo) {
         List<CartResponse> cartList = cartApiRepository.findAllByMemberNo(memberNo);
-
-//        List<CartResponse> cartList = carts.stream()
-//                .map(c -> new CartResponse(c.getNo(), c.getProduct().getNo(), c.getProduct().getTitle(), c.getProduct().getImgUrl(), c.getOption(), c.getProduct().getPrice(), c.getQuantity()))
-//                .collect(Collectors.toList());
 
         return ApiResponse.createSuccess(cartList);
     }
 
+    /**
+     * 카트 등록
+     */
     @PostMapping("/api/carts")
-    public ApiResponse<?> addCarts(@RequestBody CartRequest cartRequest) {
+    public ApiResponse<?> addCartItem(@RequestBody CartRequest cartRequest) {
         Cart cart = cartApiRepository.findByProductNoAndMemberNo(cartRequest.getProductNo(), cartRequest.getMemberNo());
 
         if (cart != null) {
@@ -61,6 +62,29 @@ public class CartApiController {
 
             cartApiRepository.save(newCart);
         }
+
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    /**
+     * 카트 수량 변경
+     */
+    @PutMapping("/api/carts")
+    public ApiResponse<?> changeCartItemQuantity(@RequestBody CartRequest cartRequest) {
+        Cart cart = cartApiRepository.findById(cartRequest.getCartNo()).get();
+        cart.setQuantity(cartRequest.getQuantity());
+
+        cartApiRepository.save(cart);
+
+        return ApiResponse.createSuccessWithNoContent();
+    }
+
+    /**
+     * 카트 삭제
+     */
+    @DeleteMapping("/api/carts/{cartNo}")
+    public ApiResponse<?> removeCartItem(@PathVariable Long cartNo) {
+        cartApiRepository.deleteById(cartNo);
 
         return ApiResponse.createSuccessWithNoContent();
     }
