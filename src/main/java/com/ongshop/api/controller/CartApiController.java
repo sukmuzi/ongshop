@@ -41,12 +41,12 @@ public class CartApiController {
      */
     @PostMapping("/api/carts")
     public ApiResponse<?> addCartItem(@RequestBody CartRequest cartRequest) {
-        Cart cart = cartApiRepository.findByProductNoAndMemberNo(cartRequest.getProductNo(), cartRequest.getMemberNo());
+        Cart cart = cartApiRepository.findByProductNoAndMemberNoAndOption(cartRequest.getProductNo(), cartRequest.getMemberNo(), cartRequest.getOption());
 
         if (cart != null) {
-            int prevQuantity = Integer.parseInt(cart.getQuantity());
-            int quantity = Integer.parseInt(cartRequest.getQuantity());
-            cart.setQuantity(String.valueOf(prevQuantity + quantity));
+            int prevQuantity = cart.getQuantity();
+            int quantity = cartRequest.getQuantity();
+            cart.setQuantity(prevQuantity + quantity);
 
             cartApiRepository.save(cart);
         } else {
@@ -84,7 +84,10 @@ public class CartApiController {
      */
     @DeleteMapping("/api/carts/{cartNo}")
     public ApiResponse<?> removeCartItem(@PathVariable Long cartNo) {
-        cartApiRepository.deleteById(cartNo);
+        Cart cart = cartApiRepository.findById(cartNo).get();
+        cart.setProduct(null);
+//        cartApiRepository.deleteById(cartNo);
+        cartApiRepository.delete(cart);
 
         return ApiResponse.createSuccessWithNoContent();
     }

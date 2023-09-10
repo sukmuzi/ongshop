@@ -23,5 +23,5 @@ public interface CartApiRepository extends JpaRepository<Cart, Long> {
             "where c.member.no = :memberNo")
     List<CartResponse> findAllByMemberNo(Long memberNo);
 
-    Cart findByProductNoAndMemberNo(Long productNo, Long memberNo);
+    Cart findByProductNoAndMemberNoAndOption(Long productNo, Long memberNo, String option);
 }
