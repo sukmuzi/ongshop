@@ -8,5 +8,5 @@ public class CartRequest {
     private Long memberNo;
     private Long productNo;
     private String option;
-    private String quantity;
+    private int quantity;
 }

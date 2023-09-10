@@ -7,7 +7,7 @@ import lombok.Data;
 public class ProductResponse {
     private Long no;
     private String title;
-    private String price;
+    private int price;
     private String category;
     private String[] option;
     private String explanation;

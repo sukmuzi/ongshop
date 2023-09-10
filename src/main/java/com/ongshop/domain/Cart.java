@@ -14,7 +14,7 @@ public class Cart extends BaseTimeEntity {
     @Column(name = "cart_no")
     private Long no;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_no") // FK
     private Product product;
 
@@ -23,10 +23,10 @@ public class Cart extends BaseTimeEntity {
     private Member member;
 
     private String option;
-    private String quantity;
+    private int quantity;
 
     @Builder
-    public Cart(Product product, Member member, String option, String quantity) {
+    public Cart(Product product, Member member, String option, int quantity) {
         this.product = product;
         this.member = member;
         this.option = option;

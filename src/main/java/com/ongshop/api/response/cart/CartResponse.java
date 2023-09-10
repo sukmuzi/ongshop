@@ -11,6 +11,6 @@ public class CartResponse {
     private String title;
     private String imgUrl;
     private String option;
-    private String price;
-    private String quantity;
+    private int price;
+    private int quantity;
 }

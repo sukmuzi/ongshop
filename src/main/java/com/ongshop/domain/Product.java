@@ -18,14 +18,14 @@ public class Product extends BaseTimeEntity {
     private Long no;
 
     private String title;
-    private String price;
+    private int price;
     private String category;
     private String option;
     private String explanation;
     private String imgUrl;
 
     @Builder
-    public Product(String title, String price, String category, String option, String explanation, String imgUrl) {
+    public Product(String title, int price, String category, String option, String explanation, String imgUrl) {
         this.title = title;
         this.price = price;
         this.category = category;

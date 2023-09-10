@@ -18,7 +18,7 @@ public class ProductUploadRequest {
     public Product toProduct(String imgUrl) {
         return Product.builder()
                 .title(title)
-                .price(price)
+                .price(Integer.parseInt(price))
                 .category(category)
                 .option(option)
                 .explanation(explanation)
