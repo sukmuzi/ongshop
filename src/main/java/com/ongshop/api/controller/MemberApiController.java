@@ -14,9 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -44,6 +42,14 @@ public class MemberApiController {
         memberApiService.signup(memberSignupRequest);
 
         return ApiResponse.createSuccessWithNoContent();
+    }
+
+    @GetMapping("/api/members/{id}/exists")
+    public ApiResponse<?> isExistMember(@PathVariable String id) {
+        boolean isExist = memberApiRepository.existsById(id);
+        String message = isExist ? "이미 사용 중인 아이디 입니다." : "사용 가능한 아이디 입니다.";
+
+        return ApiResponse.createSuccessWithMessage(isExist, message);
     }
 
     @PostMapping("/api/logout")

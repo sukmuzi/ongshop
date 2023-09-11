@@ -45,17 +45,17 @@ public class MemberApiService {
     }
 
     public void signup(MemberSignupRequest memberSignupRequest) {
-        validateDuplicateMember(memberSignupRequest);
+//        validateDuplicateMember(memberSignupRequest);
         Member member = memberSignupRequest.toMember(passwordEncoder);
 
         MemberSignupResponse.of(memberApiRepository.save(member));
     }
 
-    private void validateDuplicateMember(MemberSignupRequest memberSignupRequest) {
-        Member findMembers = memberApiRepository.findById(memberSignupRequest.getId());
-
-        if(findMembers != null) {
-            throw new IllegalStateException("아이디가 이미 사용 중 입니다.");
-        }
-    }
+//    private void validateDuplicateMember(MemberSignupRequest memberSignupRequest) {
+//        Member findMembers = memberApiRepository.findById(memberSignupRequest.getId());
+//
+//        if(findMembers != null) {
+//            throw new IllegalStateException("아이디가 이미 사용 중 입니다.");
+//        }
+//    }
 }

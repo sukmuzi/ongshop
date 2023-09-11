@@ -24,6 +24,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(SUCCESS_STATUS, result, null);
     }
 
+    public static <T> ApiResponse<T> createSuccessWithMessage(T result, String message) {
+        return new ApiResponse<>(SUCCESS_STATUS, result, message);
+    }
+
     public static ApiResponse<?> createSuccessWithNoContent() {
         return new ApiResponse<>(SUCCESS_STATUS, null, null);
     }
