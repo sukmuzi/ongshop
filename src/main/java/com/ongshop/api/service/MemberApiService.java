@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -42,9 +44,18 @@ public class MemberApiService {
         return token;
     }
 
-    public void signup(MemberSignupRequest memberSignupRequest) throws ApiException {
+    public void signup(MemberSignupRequest memberSignupRequest) {
+        validateDuplicateMember(memberSignupRequest);
         Member member = memberSignupRequest.toMember(passwordEncoder);
 
         MemberSignupResponse.of(memberApiRepository.save(member));
+    }
+
+    private void validateDuplicateMember(MemberSignupRequest memberSignupRequest) {
+        Member findMembers = memberApiRepository.findById(memberSignupRequest.getId());
+
+        if(findMembers != null) {
+            throw new IllegalStateException("아이디가 이미 사용 중 입니다.");
+        }
     }
 }
